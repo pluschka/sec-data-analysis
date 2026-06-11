@@ -8,7 +8,7 @@ sys.path.append(str(project_root / "src/02_data_preperation"))
 
 
 df = pd.read_csv(project_root/"data/all_sec_concat.csv",
-                             index_col=0)
+                 index_col=0)
 
 # change string into bool, D = direct, I = indirect
 df['direct_ownership'] = (
