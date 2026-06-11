@@ -1,9 +1,9 @@
 import pandas as pd
 
 
-def extract_relevant_from_jsonl(month='2018-01'):
+def extract_relevant_from_jsonl(yyyy_mm='2018-01'):
     # load jsonl from zip file
-    insider_data = pd.read_json(f'data/{month}.jsonl.gz',
+    insider_data = pd.read_json(f'data/{yyyy_mm}.jsonl.gz',
                                 lines=True,
                                 compression='gzip')
 
@@ -77,7 +77,7 @@ def extract_relevant_from_jsonl(month='2018-01'):
     insider_data = insider_data[insider_data['amounts.pricePerShare'] >= 2]
 
     # making sure there are no date outliers
-    start = pd.to_datetime(month, format='%Y-%m')
+    start = pd.to_datetime(yyyy_mm, format='%Y-%m')
     min_transactionDate = start + pd.DateOffset(months=-3)
     insider_data['transactionDate'] = pd.to_datetime(
                                         insider_data['transactionDate'])
@@ -109,7 +109,7 @@ def extract_relevant_from_jsonl(month='2018-01'):
         'reportingOwner.relationship.isOther']]
 
     # save data
-    insider_data.to_csv(f'data/relevant_{month}.csv',
+    insider_data.to_csv(f'data/relevant_{yyyy_mm}.csv',
                         header=True,
                         index=False)
 
