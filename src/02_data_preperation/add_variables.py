@@ -7,12 +7,8 @@ project_root = Path().resolve()
 sys.path.append(str(project_root / "src/02_data_preperation"))
 
 
-all_sec_concat = pd.read_csv(project_root/"data/all_sec_concat.csv",
+df = pd.read_csv(project_root/"data/all_sec_concat.csv",
                              index_col=0)
-
-keep_cols = [c for c in all_sec_concat.columns if not (str(c).isdigit() and 0
-                                                       <= int(c) <= 750)]
-df = all_sec_concat.loc[:, keep_cols]
 
 # change string into bool, D = direct, I = indirect
 df['direct_ownership'] = (
@@ -71,17 +67,6 @@ df['high_frequency_trader'] = (
 # Cluster buys in past 14 days
 df['transactionDate'] = pd.to_datetime(df['transactionDate'], errors='coerce')
 
-# calculate daily fillings of ticker
-daily = (df.groupby(['issuer.tradingSymbol', 'transactionDate']).size()
-           .rename('n').reset_index())
-# rolling count for past 14 days of fillings for this ticker
-roll = (daily.set_index('transactionDate')
-             .groupby('issuer.tradingSymbol')['n']
-             .rolling('14D').sum()
-             .rename('trades_14d')
-             .reset_index())
-
-df = df.merge(roll, on=['issuer.tradingSymbol', 'transactionDate'], how='left')
 
 # Cluster buys dummy
 df['cluster_buy'] = (
