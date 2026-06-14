@@ -13,7 +13,7 @@ df = pd.read_csv(project_root/"data/all_sec_concat.csv",
 # change string into bool, D = direct, I = indirect
 df['direct_ownership'] = (
     df['ownershipNature.directOrIndirectOwnership'].eq('D')
-).astype('int8')
+).astype('bool')
 df = df.drop(columns="ownershipNature.directOrIndirectOwnership")
 
 # for model readability month_sin and month_cos
@@ -47,6 +47,7 @@ count_trades_tbl = (df
                     .count()
                     .rename('count')
                     .reset_index())
+
 df = df.merge(
     right=count_trades_tbl.rename(
         columns={"count": "filing_count_reportingOwner.name"},
@@ -61,7 +62,7 @@ median = df['filing_count_reportingOwner.name'].median()
 df['high_frequency_trader'] = (
     df['filing_count_reportingOwner.name']
     .gt(median)
-    .astype('int8')
+    .astype('bool')
 )
 
 # Cluster buys in past 14 days
@@ -71,7 +72,7 @@ df['transactionDate'] = pd.to_datetime(df['transactionDate'], errors='coerce')
 # Cluster buys dummy
 df['cluster_buy'] = (
     df['trades_14d'].gt(1)  # .gt() -> grater than
-    .astype('int8')
+    .astype('bool')
 )
 
 # high price dummy
@@ -80,7 +81,7 @@ median = df['amounts.pricePerShare'].median()
 df['high_price'] = (
     df['amounts.pricePerShare']
     .gt(median)
-    .astype('int8')
+    .astype('bool')
 )
 
 # postTransactionAmounts.sharesOwnedFollowingTransaction is the amount of
@@ -109,21 +110,35 @@ df = df[
 df['high_change_in_holdings'] = (
     df['holding_change_percent'] >
     df['holding_change_percent']
-    .median()).astype('int8')
+    .median()).astype('bool')
 
-close_relative_to_filing = pd.read_csv(project_root /
+close_relative_to_filing = pd.read_csv(project_root / 
                                        "data/close_relative_to_filing.csv",
-                                       index_col=0)
+                                       index_col=False)
+close_relative_to_filing_target_sum = close_relative_to_filing[[
+    "issuer.tradingSymbol", "transactionDate"]]
+
+for _row in close_relative_to_filing:
+    for i in ['2', '3', '4', '5', '6', '7', '8', '9', '10', '20', '60']:
+        varname = "target_" + i
+        close_relative_to_filing_target_sum[varname] = (
+            close_relative_to_filing["0"] <
+            close_relative_to_filing[i]
+            )
 
 close_relative_to_filing["transactionDate"] = pd.to_datetime(
     close_relative_to_filing["transactionDate"]
 )
 
 merged_df = df.merge(
-    close_relative_to_filing,
+    close_relative_to_filing_target_sum,
     how="inner",
     on=["issuer.tradingSymbol", "transactionDate"]
 )
 
 merged_df.to_csv(project_root / "data/inner_close_sec_uncleaned.csv",
                  index=False)
+
+close_relative_to_filing_target_sum.to_csv(project_root /
+                                           "data/close_target_sum.csv",
+                                           index=False)
