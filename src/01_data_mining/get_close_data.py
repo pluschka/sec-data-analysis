@@ -179,9 +179,5 @@ for s in files:
 
 close_relative_to_filing = pd.concat(all_symbol_dfs, ignore_index=True)
 
-close_relative_to_filing.to_csv("data/close_relative_to_filing.csv", index=False)
-
-for _row in close_relative_to_filing:
-    close_relative_to_filing_targets = close_relative_to_filing_targets[]
-    (close_relative_to_filing["0"] <
-    close_relative_to_filing["5"])
+close_relative_to_filing.to_csv("data/close_relative_to_filing.csv",
+                                index=False)

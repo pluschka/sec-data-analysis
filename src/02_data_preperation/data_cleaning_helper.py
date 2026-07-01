@@ -4,11 +4,9 @@ import math
 import itertools
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy.stats import boxcox, skew, zscore
+from scipy.stats import boxcox, skew
 from sklearn.preprocessing import PowerTransformer
 from sklearn.utils import resample
-from pandas.api.types import is_numeric_dtype
-from IPython.display import display
 
 
 def missing_strategy(df,
@@ -273,7 +271,6 @@ def skewness_overview(df):
 
         results.append(row)
     return pd.DataFrame(results)
-
 
 
 def balance(df, name_target="target"):
