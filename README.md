@@ -17,8 +17,8 @@ for short-term price movements.
 ---
 
 ## Project Structure
+<img width="1731" height="1002" alt="ulm drawio(2)" src="https://github.com/user-attachments/assets/9f1b5748-f447-46ae-8903-84c284f240ca" />
 
-<img width="1741" height="662" alt="ulm" src="https://github.com/user-attachments/assets/ff683d5f-4f6c-4360-a139-6d98c8cf1a41" />
 
 
 ## Key Findings
